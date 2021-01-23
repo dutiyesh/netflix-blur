@@ -1,0 +1,25 @@
+.netflix-blur-svg-icon-playerBlur {
+  transform: scale(0.8);
+  transition: transform 0.25s cubic-bezier(0.5, 0, 0.1, 1);
+}
+
+.netflix-blur-svg-icon-playerBlur-off {
+  display: none !important;
+}
+
+.netflix-blur-player-blur-control:hover .netflix-blur-svg-icon-playerBlur {
+  transform: scale(1);
+}
+
+/* blur active state */
+.netflix-blur-active .nf-player-container .VideoContainer video {
+  filter: blur(25px) !important;
+}
+
+.netflix-blur-active .netflix-blur-svg-icon-playerBlur-on {
+  display: none !important;
+}
+
+.netflix-blur-active .netflix-blur-svg-icon-playerBlur-off {
+  display: block !important;
+}
