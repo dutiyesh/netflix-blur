@@ -4,15 +4,15 @@ Blur graphic content while watching Netflix TV Shows and Movies.
 
 ## Install
 
-[**Chrome** extension]() <!-- TODO: Add chrome extension link inside parenthesis -->
+[**Chrome** extension](https://chrome.google.com/webstore/detail/netflix-blur/aohjdecagmjlmhdbfibpifiogieheoim)
 
 ## Feature
 
 <div align="center">
 
-**Blur graphic content by pressing Blur button in Player Control.**<br/>
+**Blur graphic content by pressing Blur button from Player Control.**<br/>
 <img src="./assets/Preview.jpg" width="600" /><br/>
-<bpressing>You can also press B keyboard key to blur graphic content.</b><br/><br/>
+<bpressing>You can also press keyboard B key to blur graphic content.</b><br/><br/>
 
 </div>
 
