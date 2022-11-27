@@ -104,6 +104,10 @@ async function initializeBlurControl(): Promise<void> {
     playerControlElement,
     audioSubtitleControlElement!.parentNode!.parentNode!.firstChild
   );
+
+  if (typeof unsubscribeShortcut === "undefined") {
+    initShortcut();
+  }
 }
 
 function initShortcut() {
