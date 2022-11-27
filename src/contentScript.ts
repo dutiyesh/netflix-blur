@@ -8,6 +8,7 @@ import "./contentScript.css";
 type CallbackFunction = () => void;
 
 let unsubscribeShortcut: CallbackFunction | undefined;
+let domObserver: MutationObserver;
 
 function cleanUp(): void {
   document.body.classList.remove("netflix-blur-active");
@@ -16,35 +17,69 @@ function cleanUp(): void {
     unsubscribeShortcut();
     unsubscribeShortcut = undefined;
   }
+
+  if (domObserver) {
+    domObserver.disconnect();
+  }
 }
 
-async function initialize(): Promise<void> {
-  const controlsElement = await elementReady(
-    ".PlayerControlsNeo__bottom-controls",
+async function initializeObserver() {
+  const targetNode = await elementReady("[data-uia='player']", {
+    stopOnDomReady: false,
+    timeout: 10000,
+  });
+
+  if (typeof targetNode === "undefined") {
+    return;
+  }
+
+  const config = { attributes: false, childList: true, subtree: true };
+
+  const callback = (mutationList: MutationRecord[]) => {
+    for (const mutation of mutationList) {
+      if (mutation.type === "childList" && mutation.addedNodes.length > 0) {
+        const controlsElement = Array.from(mutation.addedNodes).find(
+          (node: any) => {
+            return (
+              node.querySelector("[data-uia='control-audio-subtitle']") !== null
+            );
+          }
+        );
+
+        if (controlsElement) {
+          initializeBlurControl();
+        }
+      }
+    }
+  };
+
+  domObserver = new MutationObserver(callback);
+  domObserver.observe(targetNode!, config);
+}
+
+async function initializeBlurControl(): Promise<void> {
+  const audioSubtitleControlElement = await elementReady(
+    "[data-uia='control-audio-subtitle']",
     {
       stopOnDomReady: false,
+      timeout: 10000,
     }
   );
 
-  const titleElement = controlsElement!.querySelector(".video-title");
-
-  // clean up prev state
-  cleanUp();
+  if (typeof audioSubtitleControlElement === "undefined") {
+    return;
+  }
 
   const blurButton = document.querySelector(
     ".netflix-blur-player-blur-control"
   );
+
   if (blurButton) {
-    titleElement!.removeChild(blurButton);
+    blurButton.remove();
   }
 
   const playerControlElement = document.createElement("div");
-  playerControlElement.classList.add(
-    "touchable",
-    "PlayerControls--control-element",
-    "nfp-popup-control",
-    "netflix-blur-player-blur-control"
-  );
+  playerControlElement.classList.add("netflix-blur-player-blur-control");
   playerControlElement.title = "Blur";
 
   playerControlElement.addEventListener("click", () => {
@@ -59,28 +94,25 @@ async function initialize(): Promise<void> {
     }
   });
 
-  const html = `<button class="touchable PlayerControls--control-element nfp-button-control default-control-button" tabIndex="0" role="button" aria-label="Blur Video Player">
+  const html = `<button class="netflix-blur-player-button" tabIndex="0" role="button" aria-label="Blur Video Player">
   ${BLUR_ON_ICON}
   ${BLUR_OFF_ICON}
 </button>`;
 
   playerControlElement.innerHTML = html;
-  titleElement!.parentNode!.insertBefore(
+  audioSubtitleControlElement!.parentNode!.parentNode!.insertBefore(
     playerControlElement,
-    titleElement!.nextSibling
+    audioSubtitleControlElement!.parentNode!.parentNode!.firstChild
   );
+}
 
-  // add shortcut key
+function initShortcut() {
   unsubscribeShortcut = tinykeys(window, {
     b: () => {
-      const blurButton = document.querySelector(
-        ".netflix-blur-player-blur-control"
-      );
-
-      if (blurButton) {
-        const clickEvent = new Event("click");
-
-        blurButton.dispatchEvent(clickEvent);
+      if (document.body.classList.contains("netflix-blur-active")) {
+        document.body.classList.remove("netflix-blur-active");
+      } else {
+        document.body.classList.add("netflix-blur-active");
       }
     },
   });
@@ -88,7 +120,9 @@ async function initialize(): Promise<void> {
 
 chrome.runtime.onMessage.addListener((message: any) => {
   if (message.type === "ADD_BLUR_BUTTON") {
-    initialize();
+    initShortcut();
+    initializeObserver();
+    initializeBlurControl();
   } else if (message.type === "CLEAN_UP") {
     cleanUp();
   }

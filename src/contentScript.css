@@ -1,3 +1,27 @@
+.netflix-blur-player-blur-control {
+  width: 5.2rem;
+  height: 5.2rem;
+}
+
+.netflix-blur-player-button {
+  width: 4rem;
+  height: 4rem;
+  padding: 0.16em 0.83em;
+  fill: #fff;
+  align-items: center;
+  background: transparent;
+  border: 0;
+  box-sizing: content-box;
+  cursor: pointer;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: center;
+  outline: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
 .netflix-blur-svg-icon-playerBlur {
   transform: scale(0.8);
   transition: transform 0.25s cubic-bezier(0.5, 0, 0.1, 1);
@@ -22,4 +46,8 @@
 
 .netflix-blur-active .netflix-blur-svg-icon-playerBlur-off {
   display: block !important;
+}
+
+.netflix-blur-active .watch-video [data-uia="video-canvas"] video {
+  filter: blur(25px) !important;
 }

@@ -1,6 +1,6 @@
 {
   "name": "netflix-blur",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Blur graphic content while watching Netflix TV Shows and Movies.",
   "private": true,
   "scripts": {

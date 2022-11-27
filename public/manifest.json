@@ -1,16 +1,15 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Netflix Blur",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Blur graphic content while watching Netflix TV Shows and Movies.",
   "icons": {
     "128": "icons/icon_128.png"
   },
   "background": {
-    "scripts": ["background.js"],
-    "persistent": false
+    "service_worker": "background.js"
   },
-  "permissions": ["https://www.netflix.com/*"],
+  "host_permissions": ["https://www.netflix.com/*"],
   "content_scripts": [
     {
       "matches": ["https://www.netflix.com/*"],
